@@ -739,3 +739,9 @@ The Docker cluster configuration and original lab materials were provided as par
 
 
 This repository documents my learning experiments and measurements.
+
+## Additional Documentation
+
+- [Incident Report](INCIDENT.md)
+- [AI Usage Log](AI_LOG.md)
+- [Knowledge Check](KNOWLEDGE_CHECK.md)
