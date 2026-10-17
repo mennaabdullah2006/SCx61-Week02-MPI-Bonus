@@ -1,6 +1,6 @@
-\# Parallel Image Filtering with MPI
+# Parallel Image Filtering with MPI
 
-\## SCx61 Week 2 - MPI Point-to-Point Communication
+## SCx61 Week 2 - MPI Point-to-Point Communication
 
 
 
@@ -8,19 +8,19 @@ This project demonstrates parallel image filtering using MPI across three Docker
 
 
 
-\*\*Course:\*\* SCx61 Distributed Computing
+**Course:** SCx61 Distributed Computing
 
-\*\*Week:\*\* 2 - MPI Point-to-Point
+**Week:** 2 - MPI Point-to-Point
 
-\*\*Bonus extension:\*\* E2 - Finding the Hang Boundary
-
-
-
-\---
+**Bonus extension:** E2 - Finding the Hang Boundary
 
 
 
-\## 1. The Problem
+---
+
+
+
+## 1. The Problem
 
 
 
@@ -32,7 +32,7 @@ A 3x3 box blur needs the row above and the row below each pixel. In version 1, e
 
 
 
-I compared the parallel output with a serial reference produced by `filter\_ref.py`. The serial implementation processes the entire image without splitting it, making it a useful correctness reference.
+I compared the parallel output with a serial reference produced by `filter_ref.py`. The serial implementation processes the entire image without splitting it, making it a useful correctness reference.
 
 
 
@@ -40,9 +40,9 @@ My measurements showed:
 
 
 
-\- Version 1: 4188 differing pixels.
+- Version 1: 4188 differing pixels.
 
-\- Version 2: 0 differing pixels.
+- Version 2: 0 differing pixels.
 
 
 
@@ -54,11 +54,11 @@ The incorrect rows in version 1 were:
 
 
 
-\---
+---
 
 
 
-\## 2. Architecture
+## 2. Architecture
 
 
 
@@ -66,11 +66,11 @@ The cluster contains three Docker containers and six MPI ranks.
 
 
 
-\- node0: ranks 0 and 1
+- node0: ranks 0 and 1
 
-\- node1: ranks 2 and 3
+- node1: ranks 2 and 3
 
-\- node2: ranks 4 and 5
+- node2: ranks 4 and 5
 
 
 
@@ -98,83 +98,83 @@ Finally, rank 0 combines the results and saves the output image.
 
 flowchart LR
 
-&#x20;   subgraph N0\["node0"]
+    subgraph N0["node0"]
 
-&#x20;       R0\["Rank 0"]
+        R0["Rank 0"]
 
-&#x20;       R1\["Rank 1"]
+        R1["Rank 1"]
 
-&#x20;   end
-
-
-
-&#x20;   subgraph N1\["node1"]
-
-&#x20;       R2\["Rank 2"]
-
-&#x20;       R3\["Rank 3"]
-
-&#x20;   end
+    end
 
 
 
-&#x20;   subgraph N2\["node2"]
+    subgraph N1["node1"]
 
-&#x20;       R4\["Rank 4"]
+        R2["Rank 2"]
 
-&#x20;       R5\["Rank 5"]
+        R3["Rank 3"]
 
-&#x20;   end
-
-
-
-&#x20;   R0 -->|"Image strips"| R1
-
-&#x20;   R0 -->|"Image strips"| R2
-
-&#x20;   R0 -->|"Image strips"| R3
-
-&#x20;   R0 -->|"Image strips"| R4
-
-&#x20;   R0 -->|"Image strips"| R5
+    end
 
 
 
-&#x20;   R1 <-->|"Halo rows"| R2
+    subgraph N2["node2"]
 
-&#x20;   R2 <-->|"Halo rows"| R3
+        R4["Rank 4"]
 
-&#x20;   R3 <-->|"Halo rows"| R4
+        R5["Rank 5"]
 
-&#x20;   R4 <-->|"Halo rows"| R5
+    end
+
+
+
+    R0 -->|"Image strips"| R1
+
+    R0 -->|"Image strips"| R2
+
+    R0 -->|"Image strips"| R3
+
+    R0 -->|"Image strips"| R4
+
+    R0 -->|"Image strips"| R5
+
+
+
+    R1 <-->|"Halo rows"| R2
+
+    R2 <-->|"Halo rows"| R3
+
+    R3 <-->|"Halo rows"| R4
+
+    R4 <-->|"Halo rows"| R5
 
 ```
 
 
 
-\---
+---
 
 
 
-\## 3. How to Run
+## 3. How to Run
 
 
 
-\### Requirements
+### Requirements
 
 
 
-\- Docker Desktop
+- Docker Desktop
 
-\- Docker Compose
+- Docker Compose
 
-\- Open MPI inside the course containers
+- Open MPI inside the course containers
 
-\- Python 3
+- Python 3
 
-\- NumPy
+- NumPy
 
-\- Pillow
+- Pillow
 
 
 
@@ -182,7 +182,7 @@ The project was developed using Windows, VS Code and Docker Compose.
 
 
 
-\### Start the cluster
+### Start the cluster
 
 
 
@@ -216,7 +216,7 @@ docker compose exec -u student -w /home/student/work node0 bash
 
 
 
-\### Generate the test image
+### Generate the test image
 
 
 
@@ -226,7 +226,7 @@ Inside node0:
 
 ```bash
 
-python3 make\_test\_image.py --width 512 --height 300 --out-prefix test\_image
+python3 make_test_image.py --width 512 --height 300 --out-prefix test_image
 
 ```
 
@@ -238,39 +238,39 @@ Generate the serial reference:
 
 ```bash
 
-python3 -c "import numpy as np; from filter\_ref import box\_blur\_3x3; np.save('test\_image\_filtered\_serial.npy', box\_blur\_3x3(np.load('test\_image.npy')))"
+python3 -c "import numpy as np; from filter_ref import box_blur_3x3; np.save('test_image_filtered_serial.npy', box_blur_3x3(np.load('test_image.npy')))"
 
 ```
 
 
 
-\### Run version 1
+### Run version 1
 
 
 
 ```bash
 
-mpirun --hostfile hostfile -n 6 python3 img\_mpi\_v1\_nohalo.py
+mpirun --hostfile hostfile -n 6 python3 img_mpi_v1_nohalo.py
 
 
 
-python3 compare.py --candidate test\_image\_filtered\_v1
+python3 compare.py --candidate test_image_filtered_v1
 
 ```
 
 
 
-\### Run version 2
+### Run version 2
 
 
 
 ```bash
 
-mpirun --hostfile hostfile -n 6 python3 img\_mpi\_v2\_halo.py
+mpirun --hostfile hostfile -n 6 python3 img_mpi_v2_halo.py
 
 
 
-python3 compare.py --candidate test\_image\_filtered\_v2
+python3 compare.py --candidate test_image_filtered_v2
 
 ```
 
@@ -284,11 +284,11 @@ A fresh-clone verification has not yet been completed.
 
 
 
-\---
+---
 
 
 
-\## 4. Results
+## 4. Results
 
 
 
@@ -314,11 +314,11 @@ Version 2 exchanged halo rows before filtering and matched the serial reference 
 
 
 
-\### Visual comparison
+### Visual comparison
 
 
 
-!\[Comparison between v1 and v2](lab/results/v1\_vs\_v2.png)
+![Comparison between v1 and v2](lab/results/v1_vs_v2.png)
 
 
 
@@ -330,11 +330,11 @@ The boundary errors are subtle in the full image, so the numerical comparison is
 
 
 
-\---
+---
 
 
 
-\## 5. Investigating the MPI Deadlock
+## 5. Investigating the MPI Deadlock
 
 
 
@@ -350,7 +350,7 @@ When the messages became large enough, the program could stop making progress be
 
 
 
-\### Evidence
+### Evidence
 
 
 
@@ -374,7 +374,7 @@ The timeout confirmed that the program was hanging.
 
 
 
-\### Testing synchronous sends
+### Testing synchronous sends
 
 
 
@@ -398,7 +398,7 @@ This supported the explanation that the naive communication order depended on MP
 
 
 
-\### Testing the eager limit
+### Testing the eager limit
 
 
 
@@ -408,7 +408,7 @@ I tested an increased eager limit:
 
 ```bash
 
-\--mca btl\_vader\_eager\_limit 16384
+--mca btl_vader_eager_limit 16384
 
 ```
 
@@ -426,7 +426,7 @@ This showed that increasing the eager limit only hid the symptom for some messag
 
 
 
-\### Verifying the fix
+### Verifying the fix
 
 
 
@@ -436,7 +436,7 @@ I ran:
 
 ```bash
 
-bash verify\_fix.sh
+bash verify_fix.sh
 
 ```
 
@@ -456,7 +456,7 @@ Each run completed and produced:
 
 ```text
 
-np.array\_equal: True
+np.array_equal: True
 
 Differing pixels: 0 / 2457600
 
@@ -474,15 +474,15 @@ The naive deadlock program and Break Kit scripts are course materials and are no
 
 
 
-\---
+---
 
 
 
-\## 6. Bonus Extension E2 - Finding the Hang Boundary
+## 6. Bonus Extension E2 - Finding the Hang Boundary
 
 
 
-\### Objective
+### Objective
 
 
 
@@ -494,7 +494,7 @@ The purpose was to demonstrate that the hang boundary depends on the MPI impleme
 
 
 
-\### Prediction
+### Prediction
 
 
 
@@ -502,27 +502,27 @@ Before testing, I predicted that the first hanging width would be 4096 pixels.
 
 
 
-\### Environment
+### Environment
 
 
 
-\- Windows host computer
+- Windows host computer
 
-\- Docker Desktop and Docker Compose
+- Docker Desktop and Docker Compose
 
-\- Three containers: node0, node1 and node2
+- Three containers: node0, node1 and node2
 
-\- Six MPI ranks
+- Six MPI ranks
 
-\- Open MPI inside the containers
+- Open MPI inside the containers
 
-\- Image height: 300 pixels
+- Image height: 300 pixels
 
-\- Timeout: 10 seconds per run
+- Timeout: 10 seconds per run
 
 
 
-\### Experiment
+### Experiment
 
 
 
@@ -536,7 +536,7 @@ The test command was:
 
 ```bash
 
-timeout 10 mpirun --hostfile hostfile -n 6 python3 img\_mpi\_v3\_naive\_halo.py sw\_$W sw\_${W}\_out
+timeout 10 mpirun --hostfile hostfile -n 6 python3 img_mpi_v3_naive_halo.py sw_$W sw_${W}_out
 
 ```
 
@@ -550,7 +550,7 @@ An exit code of 124 means the timeout stopped the program.
 
 
 
-\### Measurements
+### Measurements
 
 
 
@@ -608,7 +608,7 @@ An exit code of 124 means the timeout stopped the program.
 
 
 
-\### Repeated verification
+### Repeated verification
 
 
 
@@ -638,7 +638,7 @@ Width 4041 timed out in all three repeated runs.
 
 
 
-\### What surprised me
+### What surprised me
 
 
 
@@ -662,7 +662,7 @@ A classmate using a different MPI build, configuration or machine may observe a 
 
 
 
-\### Evidence files
+### Evidence files
 
 
 
@@ -670,7 +670,7 @@ The detailed extension report is available here:
 
 
 
-\[EXTENSION.md](lab/work/EXTENSION.md)
+[EXTENSION.md](lab/work/EXTENSION.md)
 
 
 
@@ -678,15 +678,15 @@ The repeated experiment output is available here:
 
 
 
-\[E2\_evidence.txt](lab/work/E2\_evidence.txt)
+[E2_evidence.txt](lab/work/E2_evidence.txt)
 
 
 
-\---
+---
 
 
 
-\## 7. AI Usage
+## 7. AI Usage
 
 
 
@@ -706,27 +706,27 @@ The conclusions in this report are based on the experiments and outputs recorded
 
 
 
-\---
+---
 
 
 
-\## 8. What I Would Do Next
+## 8. What I Would Do Next
 
 
 
-\- Test the corrected MPI implementation with additional image sizes.
+- Test the corrected MPI implementation with additional image sizes.
 
-\- Investigate non-blocking communication using `MPI.Isend` and `MPI.Irecv`.
+- Investigate non-blocking communication using `MPI.Isend` and `MPI.Irecv`.
 
-\- Compare correctness and performance after collecting reliable timing measurements.
-
-
-
-\---
+- Compare correctness and performance after collecting reliable timing measurements.
 
 
 
-\## Credits
+---
+
+
+
+## Credits
 
 
 
